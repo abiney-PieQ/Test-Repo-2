@@ -1,4 +1,4 @@
-# Extra stub workflow for SyncPoint local testing (workflow list / mapping).
+# Extra stub workflow — 3-stage graph: validate → build → deploy.
 name: Deploy Canary
 
 on:
@@ -8,8 +8,8 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
-    name: Simulate canary deploy
+  validate:
+    name: validate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,25 +18,31 @@ jobs:
       - name: Validate workspace
         run: |
           set -euo pipefail
-          echo "Validating canary workspace"
+          echo "Stage: validate (canary)"
           echo "repository=${{ github.repository }}"
-          echo "ref=${{ github.ref }}"
           echo "sha=${{ github.sha }}"
-          sleep 3
+          sleep 4
 
+  build:
+    name: build
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
       - name: Build artifact (stub)
         run: |
           set -euo pipefail
-          echo "Building canary artifact (stub)"
-          mkdir -p dist
-          echo "canary-build-${{ github.sha }}" > dist/build-info.txt
-          cat dist/build-info.txt
-          sleep 4
+          echo "Stage: build (canary)"
+          sleep 5
+          echo "canary-build-${{ github.sha }}"
 
+  deploy:
+    name: deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy canary (stub)
         run: |
           set -euo pipefail
-          echo "Deploying canary (stub)"
-          echo "artifact=$(cat dist/build-info.txt)"
-          sleep 5
+          echo "Stage: deploy (canary)"
+          sleep 6
           echo "Canary deploy simulation complete"

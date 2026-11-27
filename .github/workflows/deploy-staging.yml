@@ -1,6 +1,5 @@
 # Stub preprod/staging deploy for SyncPoint local testing.
-# Matches config_dev.yml github.workflowFileName (PIEQ_ENVIRONMENT=dev).
-# SyncPoint API triggers this via workflow_dispatch (POST .../actions/workflows/deploy-staging.yml/dispatches).
+# Multi-job stages so GitHub Actions shows a validate → build → test → deploy graph.
 name: Deploy Staging
 
 on:
@@ -10,8 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
-    name: Simulate staging deploy
+  validate:
+    name: validate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,26 +19,52 @@ jobs:
       - name: Validate workspace
         run: |
           set -euo pipefail
-          echo "Validating staging workspace"
+          echo "Stage: validate (staging)"
           echo "repository=${{ github.repository }}"
           echo "ref=${{ github.ref }}"
           echo "sha=${{ github.sha }}"
           test -n "${{ github.sha }}"
-          sleep 3
+          sleep 4
+
+  build:
+    name: build
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Build artifact (stub)
         run: |
           set -euo pipefail
-          echo "Building staging artifact (stub)"
+          echo "Stage: build (staging)"
           mkdir -p dist
           echo "staging-build-${{ github.sha }}" > dist/build-info.txt
           cat dist/build-info.txt
-          sleep 4
+          sleep 5
 
+  test:
+    name: test
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run tests (stub)
+        run: |
+          set -euo pipefail
+          echo "Stage: test (staging)"
+          echo "All stub tests passed"
+          sleep 5
+
+  deploy:
+    name: deploy
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to staging (stub)
         run: |
           set -euo pipefail
-          echo "Deploying to staging/preprod (stub)"
-          echo "artifact=$(cat dist/build-info.txt)"
-          sleep 5
+          echo "Stage: deploy (staging/preprod)"
+          echo "repository=${{ github.repository }}"
+          echo "sha=${{ github.sha }}"
+          sleep 6
           echo "Staging deploy simulation complete"
