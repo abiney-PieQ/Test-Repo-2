@@ -17,13 +17,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Simulate preprod deploy
+      - name: Validate workspace
         run: |
           set -euo pipefail
-          echo "SyncPoint test deploy (staging/preprod)"
+          echo "Validating staging workspace"
           echo "repository=${{ github.repository }}"
           echo "ref=${{ github.ref }}"
           echo "sha=${{ github.sha }}"
-          # Brief pause so the SPA workflow-run poller can observe in_progress → completed
-          sleep 8
+          test -n "${{ github.sha }}"
+          sleep 3
+
+      - name: Build artifact (stub)
+        run: |
+          set -euo pipefail
+          echo "Building staging artifact (stub)"
+          mkdir -p dist
+          echo "staging-build-${{ github.sha }}" > dist/build-info.txt
+          cat dist/build-info.txt
+          sleep 4
+
+      - name: Deploy to staging (stub)
+        run: |
+          set -euo pipefail
+          echo "Deploying to staging/preprod (stub)"
+          echo "artifact=$(cat dist/build-info.txt)"
+          sleep 5
           echo "Staging deploy simulation complete"

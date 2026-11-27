@@ -17,12 +17,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Simulate production deploy
+      - name: Validate workspace
         run: |
           set -euo pipefail
-          echo "SyncPoint test deploy (production)"
+          echo "Validating production workspace"
           echo "repository=${{ github.repository }}"
           echo "ref=${{ github.ref }}"
           echo "sha=${{ github.sha }}"
-          sleep 8
+          test -n "${{ github.sha }}"
+          sleep 3
+
+      - name: Build artifact (stub)
+        run: |
+          set -euo pipefail
+          echo "Building production artifact (stub)"
+          mkdir -p dist
+          echo "production-build-${{ github.sha }}" > dist/build-info.txt
+          cat dist/build-info.txt
+          sleep 4
+
+      - name: Deploy to production (stub)
+        run: |
+          set -euo pipefail
+          echo "Deploying to production (stub)"
+          echo "artifact=$(cat dist/build-info.txt)"
+          sleep 5
           echo "Production deploy simulation complete"

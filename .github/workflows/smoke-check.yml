@@ -1,0 +1,37 @@
+# Extra stub workflow for SyncPoint local testing (workflow list / mapping).
+name: Smoke Check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Simulate smoke check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Health probe (stub)
+        run: |
+          set -euo pipefail
+          echo "Running smoke health probe (stub)"
+          echo "repository=${{ github.repository }}"
+          echo "ref=${{ github.ref }}"
+          sleep 3
+
+      - name: Dependency check (stub)
+        run: |
+          set -euo pipefail
+          echo "Checking dependencies (stub)"
+          sleep 3
+          echo "ok"
+
+      - name: Smoke summary
+        run: |
+          set -euo pipefail
+          echo "Smoke check simulation complete"
+          sleep 2
