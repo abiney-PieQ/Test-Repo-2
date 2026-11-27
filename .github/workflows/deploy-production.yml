@@ -1,0 +1,28 @@
+# Stub production deploy for SyncPoint local testing.
+# Matches config_dev.yml github.workflowProductionFileName (PIEQ_ENVIRONMENT=dev).
+# SyncPoint API triggers this via workflow_dispatch (POST .../actions/workflows/deploy-production.yml/dispatches).
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Simulate production deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Simulate production deploy
+        run: |
+          set -euo pipefail
+          echo "SyncPoint test deploy (production)"
+          echo "repository=${{ github.repository }}"
+          echo "ref=${{ github.ref }}"
+          echo "sha=${{ github.sha }}"
+          sleep 8
+          echo "Production deploy simulation complete"
